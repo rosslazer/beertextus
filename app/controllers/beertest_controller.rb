@@ -39,8 +39,7 @@ class BeertestController < ApplicationController
 			if beer.name.downcase == beersearch.downcase
 				@match = [beer]
 			end
-    end
-	end
+	 end
 
 	else
 		@match << "Please use at least #{minChars} characters"
@@ -74,7 +73,7 @@ class BeertestController < ApplicationController
     @final = @final[160,@final.length-1]
     count = count - 1
 
-    sleep .25
+    sleep 0.25
   end
   
   end #method end
