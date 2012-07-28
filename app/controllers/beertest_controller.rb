@@ -9,8 +9,6 @@ class BeertestController < ApplicationController
 
     # set up a client to talk to the Twilio REST API
     @client = Twilio::REST::Client.new(@account_sid, @auth_token)
-
-
   
     beersearch = params["Body"]
   	@match = ""
@@ -24,8 +22,6 @@ class BeertestController < ApplicationController
   	end
 
     puts " #{@match}"
-
-    
 
   end
 end
