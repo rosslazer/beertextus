@@ -61,6 +61,7 @@ class BeertestController < ApplicationController
     )
 
     @final = @final[161,@final.length-1]
+    count = count - 1
   end
   
   end #method end
