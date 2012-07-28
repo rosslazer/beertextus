@@ -26,6 +26,7 @@ class BeertestController < ApplicationController
 
   	results = BreweryDb2.search(:q => beersearch)    
 
+
   	if beersearch.length >= minChars
 		results.each do |beer|
 			# regex match
@@ -33,9 +34,11 @@ class BeertestController < ApplicationController
 				@match << beer
 			end
   		end
+
 	else
 		@match << "Please use at least #{minChars} characters"
     @final = @match
+
 	end
 
 	@match = @match.take(arrayLimit)
@@ -48,12 +51,18 @@ class BeertestController < ApplicationController
     end
   end
 
-  @client.account.sms.messages.create(
+  count = @final.length / 160.0
+
+  while count > 0
+    @client.account.sms.messages.create(
     :from => +13156794711,
     :to => from_number,
-    :body => " #{@final}"
+    :body => " #{@final.first(160)}"
     )
-   
+
+    @final = @final[161,@final.length-1]
+  end
+  
   end #method end
 end #controller end
 
