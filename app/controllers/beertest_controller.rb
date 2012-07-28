@@ -11,6 +11,8 @@ class BeertestController < ApplicationController
     @client = Twilio::REST::Client.new(@account_sid, @auth_token)
   
     beersearch = params["Body"]
+    from_number = params["From"]
+
   	@match = ""
 
   	results = BreweryDb2.search(:q => beersearch)    
@@ -23,8 +25,16 @@ class BeertestController < ApplicationController
 
     puts " #{@match}"
 
-  end
-end
+    #####################
+
+    @client.account.sms.messages.create(
+        :from => +13156794711,
+        :to => from_number,
+        :body => " #{@match}"
+        )
+
+  end #method end
+end #controller end
 
 
 
