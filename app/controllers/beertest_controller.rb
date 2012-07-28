@@ -67,7 +67,7 @@ class BeertestController < ApplicationController
     @client.account.sms.messages.create(
     :from => +13156794711,
     :to => from_number,
-    :body => ' #{@final.first(160)}'
+    :body => " #{@final.first(160)}"
     )
 
     @final = @final[160,@final.length-1]
