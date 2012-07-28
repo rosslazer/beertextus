@@ -64,7 +64,7 @@ class BeertestController < ApplicationController
     :body => " #{@final.first(160)}"
     )
 
-    @final = @final[161,@final.length-1]
+    @final = @final[160,@final.length-1]
     count = count - 1
   end
   
