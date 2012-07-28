@@ -51,6 +51,10 @@ class BeertestController < ApplicationController
     end
   end
 
+  ################################################################
+  ### Handling instances where responses are more than one SMS ###
+  ################################################################
+
   count = @final.length / 160.0
 
   while count > 0
