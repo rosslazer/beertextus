@@ -10,9 +10,12 @@ class BeertestController < ApplicationController
   		if beer.name.casecmp(beersearch)
   			@match = beer.name
   		end
+
   	end
+
 
   end
 end
+
 
 
