@@ -1,0 +1,2 @@
+module BeertestHelper
+end
