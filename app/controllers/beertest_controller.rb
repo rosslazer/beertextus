@@ -1,16 +1,30 @@
 class BeertestController < ApplicationController
   def index
 
-  	beersearch = "coors light"
-  	@match = ""
+	###################################
+	######## SEARCH VARIABLES #########
+	arrayLimit = 4 # Max length of list
+	minChars = 3 # Min characters user must enter into search
+	###################################
+
+  	
+	beersearch = "coors" #FOR DEBUGGING
+  	@match = []
 
   	results = BreweryDb2.search(:q => beersearch)    
 
-  	results.each do |beer|
-  		if beer.name.casecmp(beersearch)
-  			@match = beer.name
+  	if beersearch.length >= minChars
+		results.each do |beer|
+			# regex match
+  			if beer.name.downcase.include? beersearch.downcase
+				@match << beer.name
+			end
   		end
-  	end
+	else
+		@match << "Please use at least #{minChars} characters"
+	end
+
+	@match = @match.take(arrayLimit)
 
     #twilio stuff
 
