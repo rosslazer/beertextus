@@ -27,19 +27,20 @@ class BeertestController < ApplicationController
   	results = BreweryDb2.search(:q => beersearch)    
 
 
-  	if beersearch.length >= minChars
+  if beersearch.length >= minChars
 		# Regex Search
 		results.each do |beer|
   			if beer.name.downcase.include? beersearch.downcase
 				@match << beer
-			end
-  		end
+			  end
+  	  end
 		# If there is an exact match, only return that beer
 		results.each do |beer|
 			if beer.name.downcase == beersearch.downcase
 				@match = [beer]
 			end
-		end
+    end
+	end
 
 	else
 		@match << "Please use at least #{minChars} characters"
