@@ -11,6 +11,8 @@ gem 'pg'
 
 gem 'thin'
 
+gem 'twilio-ruby'
+
 gem 'brewerydb2'
 
 # Gems used only for assets and not required

@@ -26,8 +26,7 @@ class BeertestController < ApplicationController
     message_body = params["Body"]
 
     puts "hello!"
-
-
+    
   end
 end
 
