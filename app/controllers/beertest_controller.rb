@@ -15,24 +15,45 @@ class BeertestController < ApplicationController
 
   	@match = ""
 
+	###################################
+	######## SEARCH VARIABLES #########
+	arrayLimit = 4 # Max length of list
+	minChars = 3 # Min characters user must enter into search
+	###################################
+  	
+  	@match = []
+    @final =""
+
   	results = BreweryDb2.search(:q => beersearch)    
 
-  	results.each do |beer|
-  		if beer.name.casecmp(beersearch)
-  			@match = beer.name
+  	if beersearch.length >= minChars
+		results.each do |beer|
+			# regex match
+  			if beer.name.downcase.include? beersearch.downcase
+				@match << beer
+			end
   		end
-  	end
+	else
+		@match << "Please use at least #{minChars} characters"
+    @final = @match
+	end
 
-    puts " #{@match}"
+	@match = @match.take(arrayLimit)
 
-    #####################
+  if @match.length ==1
+    @final = "Name:#{@match[0].name}" + " " + "Description:#{@match[0].description}"
+  else
+    @match.each do |beer|
+      @final += beer.name + ", "
+    end
+  end
 
-    @client.account.sms.messages.create(
-        :from => +13156794711,
-        :to => from_number,
-        :body => " #{@match}"
-        )
-
+  @client.account.sms.messages.create(
+    :from => +13156794711,
+    :to => from_number,
+    :body => " #{@final}"
+    )
+   
   end #method end
 end #controller end
 
