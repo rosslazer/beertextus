@@ -59,7 +59,7 @@ class BeertestController < ApplicationController
 
   if @match.length ==1
     @final = "Name: #{@match[0].name}" + " " + "Description: #{@match[0].description}" + " " + "ABV: #{@match[0].abv}%"
-  elsif  @match == nil || @match == []
+  elsif  @match == nil || @match == [] || @match == {} || @match == ""
       @final = "Sorry, no matches found. Please check your spelling."   
   else
     @match.each do |beer|
