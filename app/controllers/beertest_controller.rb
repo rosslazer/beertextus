@@ -52,12 +52,18 @@ class BeertestController < ApplicationController
   # @description = @match.description.gsub!("/","")
 
   if @match.length ==1
-    @final = "Name: #{@match[0].name}" + " " + "Description: #{@match[0].description}"
+    @final = "Name: #{@match[0].name}" + " " + "Description: #{@match[0].description}" + " " + "ABV:#{@match[0].abv}%"
   else
     @match.each do |beer|
       @final += beer.name + ", "
     end
   end
+
+
+  if @final == ""
+    @final = "Sorry, no matches found. Please check your spelling."
+  end
+
 
   ################################################################
   ### Handling instances where responses are more than one SMS ###
