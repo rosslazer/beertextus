@@ -25,10 +25,7 @@ class BeertestController < ApplicationController
     @final =""
 
   	results = BreweryDb2.search(:q => beersearch)
-    if results == nil
-      @final = "Sorry, no matches found. Please check your spelling."
-    end    
-
+  
 
   if beersearch.length >= minChars
 		# Regex Search
@@ -48,14 +45,22 @@ class BeertestController < ApplicationController
 		@match << "Please use at least #{minChars} characters"
     @final = @match
 
-	end
+ end
+
+
+   
 
 	@match = @match.take(arrayLimit)
+
+
+
 
   # @description = @match.description.gsub!("/","")
 
   if @match.length ==1
     @final = "Name: #{@match[0].name}" + " " + "Description: #{@match[0].description}" + " " + "ABV: #{@match[0].abv}%"
+  elsif  @match == nil || @match == []
+      @final = "Sorry, no matches found. Please check your spelling."   
   else
     @match.each do |beer|
       @final += beer.name + ", "
