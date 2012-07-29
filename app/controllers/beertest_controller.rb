@@ -24,7 +24,10 @@ class BeertestController < ApplicationController
   	@match = []
         @final =""
 
-  	results = BreweryDb2.search(:q => beersearch)    
+  	results = BreweryDb2.search(:q => beersearch)
+    if results == nil
+      @final = "Sorry, no matches found. Please check your spelling."
+    end    
 
 
   if beersearch.length >= minChars
@@ -57,11 +60,6 @@ class BeertestController < ApplicationController
     @match.each do |beer|
       @final += beer.name + ", "
     end
-  end
-
-
-  if @final == ""
-    @final = "Sorry, no matches found. Please check your spelling."
   end
 
 
