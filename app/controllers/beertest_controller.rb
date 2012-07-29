@@ -22,7 +22,7 @@ class BeertestController < ApplicationController
 	###################################
   	
   	@match = []
-        @final =""
+    @final =""
 
   	results = BreweryDb2.search(:q => beersearch)
     if results == nil
