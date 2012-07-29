@@ -52,7 +52,7 @@ class BeertestController < ApplicationController
   # @description = @match.description.gsub!("/","")
 
   if @match.length ==1
-    @final = "Name: #{@match[0].name}" + " " + "Description: #{@match[0].description.gsub!("\","")}"
+    @final = "Name: #{@match[0].name}" + " " + "Description: #{@match[0].description}"
   else
     @match.each do |beer|
       @final += beer.name + ", "
