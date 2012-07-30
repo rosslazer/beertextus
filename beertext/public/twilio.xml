@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?> 
-<Response>
-	<!-- <Sms>This is a test</Sms> -->
-	<Redirect method="GET">http://afternoon-gorge-3886.herokuapp.com/beertest/index</Redirect>
-</Response>
