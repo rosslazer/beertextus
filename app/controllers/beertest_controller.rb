@@ -52,15 +52,16 @@ class BeertestController < ApplicationController
 
 	@match = @match.take(arrayLimit)
 
-
+  Try = "Try one of these: "
 
   if @match.length ==1
     @final = "Name: #{@match[0].name}" + " " + "Description: #{@match[0].description}" + " " + "ABV: #{@match[0].abv}%"
   elsif  @match == nil || @match == [] || @match == {} || @match == ""
       @final = "Sorry, no matches found. Please check your spelling."   
   else
+    Try
     @match.each do |beer|
-      @final += "Try one of these:" + beer.name + ", "
+      @final += + beer.name + ", "
     end
   end
 
