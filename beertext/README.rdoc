@@ -1,0 +1,5 @@
+============
+
+BeerText.Us allows users to send a text message with the name of a beer to (315) 679-4711. The user then receives a SMS message back with information regarding the beer including a description, the ingredients and the alchol content.
+
+BeerText.Us relies extensively upon Twilio and the BreweryDB API
