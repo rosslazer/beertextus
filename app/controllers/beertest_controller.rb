@@ -58,7 +58,7 @@ class BeertestController < ApplicationController
       @final = "Sorry, no matches found. Please check your spelling."   
   else
     @match.each do |beer|
-      @final += + beer.name + ", "
+      @final += beer.name + ", "
     end
   end
 
