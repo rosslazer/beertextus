@@ -84,7 +84,7 @@ class BeertestController < ApplicationController
     @final = @final[160,@final.length-1]
     count = count - 1
 
-    sleep 0.25
+    sleep 1
   end
   
   end #method end
