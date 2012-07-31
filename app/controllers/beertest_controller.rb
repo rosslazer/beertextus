@@ -104,7 +104,7 @@ class BeertestController < ApplicationController
       @client.account.sms.messages.create(
       :from => +13156794711,
       :to => fromNumber,
-      :body => message
+      :body => message)
 
       #sleep to help lower misordering messages
       sleep 3
