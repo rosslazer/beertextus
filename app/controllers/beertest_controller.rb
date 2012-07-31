@@ -24,11 +24,11 @@ class BeertestController < ApplicationController
     @match = []
     @final =""
 
-    # query BreweryDB for any matches
+    # search BreweryDB for any matches
     results = BreweryDb2.search(:q => beersearch)
 
     # improve search results
-    if beersearch.length >= minChars
+    if beersearch.length >= minChars && results != nil
       # regex filter
       results.each do |beer|
         if beer.name.downcase.include? beersearch.downcase
@@ -42,37 +42,61 @@ class BeertestController < ApplicationController
 	end
       end
     # return error if user doesn't enter enough search characters
-    else
-      @match << "Please use at least #{minChars} characters"
-      @final = @match
+    elsif beersearch.length < minChars
+      @match = ["Please use at least #{minChars} characters for your search!"]
+    end
+
+    # if no matches found, create no matches found responce
+    if @match == []
+      @match = ["Sorry, no beers by that name found!"]
     end
 
     # trim search results to arrayLimit
     @match = @match.take(arrayLimit)
 
-    # if only one beer matched search (or error message), return info on beer
-    if @match.length == 1
-      @final = "Name: #{@match[0].name}" + " " + "Description: #{@match[0].description}"
+    # return error String if present
+    if @match[0].kind_of? String
+      @final = @match[0]
+    # if only one beer matched search, return info on beer
+    elsif @match.length == 1
+      @final = "Name: #{@match[0].name} Description: "
+      # if fields aren't empty, write them otherwise write N/A
+      if @match[0].description != nil
+        @final = @final + "#{@match[0].description} ABV: "
+      else
+        @final = @final + "N/A ABV: "
+      end
+      if @match[0].abv != nil
+        @final = @final + @match[0].abv
+      else
+        @final = @final + "N/A"
+      end
     # otherwise return list of beers
     else
       @match.each do |beer|
-      @final += beer.name + ", "
+        @final += beer.name + ", "
+      end
+      #remove last comma and space
+      @final = @final[0,@final.length-2]
     end
-  end
 
-  #cut message into multiple sms and send
-  count = @final.length / 160.0
+    # remove bad characters from final string
+    @final.gsub!("\\","")
+    @final.gsub!("\"","")
 
-  while count > 0
-    @client.account.sms.messages.create(
-    :from => +13156794711,
-    :to => from_number,
-    :body => " #{@final.first(160)}"
-    )
+    #cut message into multiple sms and send
+    count = @final.length / 160.0
 
-    @final = @final[161,@final.length-1]
-    count = count - 1
-  end
-  
+    while count > 0
+      @client.account.sms.messages.create(
+      :from => +13156794711,
+      :to => from_number,
+      :body => "#{@final.first(160)}"
+      )
+
+      @final = @final[161,@final.length-1]
+      count = count - 1
+    end
+
   end #method end
 end #controller end
