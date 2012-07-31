@@ -14,7 +14,7 @@ class BeertestController < ApplicationController
 
     # get sender's search and number
     beersearch = params["Body"]
-    from_number = params["From"]
+    fromNumber = params["From"]
 
     # search variables
     arrayLimit = 4 # max length of beer list
@@ -22,7 +22,8 @@ class BeertestController < ApplicationController
   	
     # used to store and format search results
     @match = []
-    @final =""
+    @matchString =""
+    @messages = []
 
     # search BreweryDB for any matches
     results = BreweryDb2.search(:q => beersearch)
@@ -56,49 +57,58 @@ class BeertestController < ApplicationController
 
     # return error String if present
     if @match[0].kind_of? String
-      @final = @match[0]
+      @matchString = @match[0]
     # if only one beer matched search, return info on beer
     elsif @match.length == 1
-      @final = "Name: #{@match[0].name} Description: "
+      @matchString = "Name: #{@match[0].name} Description: "
       # if fields aren't empty, write them otherwise write N/A
       if @match[0].description != nil
-        @final = @final + "#{@match[0].description} ABV: "
+        @matchString = @matchString + "#{@match[0].description} ABV: "
       else
-        @final = @final + "N/A ABV: "
+        @matchString = @matchString + "N/A ABV: "
       end
       if @match[0].abv != nil
-        @final = @final + @match[0].abv
+        @matchString = @matchString + @match[0].abv
       else
-        @final = @final + "N/A"
+        @matchString = @matchString + "N/A"
       end
     # otherwise return list of beers
     else
       @match.each do |beer|
-        @final += beer.name + ", "
+        @matchString += beer.name + ", "
       end
       #remove last comma and space
-      @final = @final[0,@final.length-2]
+      @matchString = @matchString[0,@matchString.length-2]
     end
 
     # remove bad characters from final string
-    @final.gsub!("\\","")
-    @final.gsub!("\"","")
+    @matchString.gsub!("\\","")
+    @matchString.gsub!("\"","")
+    @matchString.gsub!("\n"," ")
+    @matchString.gsub!("\t"," ")
 
-    #cut message into multiple sms and send
-    count = @final.length / 160.0
+    # cut message into multiple sms and attach message number
+    count = @matchString.length / 155 + 1
+    messageNumber = 1
+    totalMessages = count
 
-    while count > 0
+    while count > 0 && @messages.length < 10
+      @messages << "(#{messageNumber}/#{totalMessages})" + @matchString[0,154]
+      @matchString = @matchString[154,@matchString.length-1]
+      count -= 1
+      messageNumber += 1
+    end
+
+    # send messages
+    @messages.each do |message|
       @client.account.sms.messages.create(
       :from => +13156794711,
-      :to => from_number,
-      :body => "#{@final.first(160)}"
-      )
+      :to => fromNumber,
+      :body => message
 
-      @final = @final[161,@final.length-1]
-      count = count - 1
-
+      #sleep to help lower misordering messages
       sleep 3
     end
-  
+
   end #method end
 end #controller end
