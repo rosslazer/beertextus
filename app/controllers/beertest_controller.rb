@@ -1,20 +1,31 @@
 class BeertestController < ApplicationController
   def index
+
+    #########################################
+    ##    SET TRUE FOR PRODUCTION MODE     ##
+    ##       SET FALSE FOR DEV MODE        ##
+    #########################################
+    @prodMode = true
     
     # import gems
     require 'rubygems'
     require 'twilio-ruby'
 
-    # auth for Twilio
-    @account_sid = 'AC0626c6d8dc0a4551b159161c5ca7ced2'
-    @auth_token = 'd27c1fd426321b9306b58df6dd3a24aa'
+    if @prodMode
+      # auth for Twilio
+      @account_sid = 'AC0626c6d8dc0a4551b159161c5ca7ced2'
+      @auth_token = 'd27c1fd426321b9306b58df6dd3a24aa'
 
-    # set up a client to talk to the Twilio REST API
-    @client = Twilio::REST::Client.new(@account_sid, @auth_token)
+      # set up a client to talk to the Twilio REST API
+      @client = Twilio::REST::Client.new(@account_sid, @auth_token)
 
-    # get sender's search and number
-    beersearch = params["Body"]
-    fromNumber = params["From"]
+      # get sender's search and number
+      beersearch = params["Body"]
+      fromNumber = params["From"]
+    else
+      # dev mode search
+      beersearch = "laasdfaf"
+    end
 
     # remove whitespace from searches
     beersearch.strip!
@@ -36,11 +47,13 @@ class BeertestController < ApplicationController
       # regex filter
       results.each do |beer|
         if beer.name.downcase.include? beersearch.downcase
-          @match << beer
+          if beer.type == "beer"
+            @match << beer
+          end
         end
       end
       # if there is an exact match, only return that beer
-      results.each do |beer|
+      @match.each do |beer|
         if beer.name.downcase == beersearch.downcase
           @match = [beer]
 	end
@@ -52,7 +65,7 @@ class BeertestController < ApplicationController
 
     # if no matches found, create no matches found responce
     if @match == []
-      @match = ["Sorry, no beers by that name found!"]
+      @match = ["Sorry, no beers by that name found. Should we know it? Add it at brewerydb.com!"]
     end
 
     # trim search results to arrayLimit
@@ -89,6 +102,7 @@ class BeertestController < ApplicationController
     @matchString.gsub!("\"","")
     @matchString.gsub!("\n"," ")
     @matchString.gsub!("\t"," ")
+    @matchString.gsub!("\r"," ")
 
     # cut message into multiple sms and attach message number
     count = @matchString.length / 155 + 1
@@ -103,14 +117,16 @@ class BeertestController < ApplicationController
     end
 
     # send messages
-    @messages.each do |message|
-      @client.account.sms.messages.create(
-      :from => +13156794711,
-      :to => fromNumber,
-      :body => message)
+    if @prodMode
+      @messages.each do |message|
+        @client.account.sms.messages.create(
+        :from => +13156794711,
+        :to => fromNumber,
+        :body => message)
 
-      #sleep to help lower misordering messages
-      sleep 3
+        #sleep to help lower misordering messages
+        sleep 3
+      end
     end
 
   end #method end
