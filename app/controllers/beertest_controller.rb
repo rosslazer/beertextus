@@ -16,6 +16,9 @@ class BeertestController < ApplicationController
     beersearch = params["Body"]
     fromNumber = params["From"]
 
+    # remove whitespace from searches
+    beersearch.strip!
+
     # search variables
     arrayLimit = 4 # max length of beer list
     minChars = 3 # min characters user must enter for search
@@ -68,7 +71,7 @@ class BeertestController < ApplicationController
         @matchString = @matchString + "N/A ABV: "
       end
       if @match[0].abv != nil
-        @matchString = @matchString + @match[0].abv
+        @matchString = @matchString + @match[0].abv + "%"
       else
         @matchString = @matchString + "N/A"
       end
