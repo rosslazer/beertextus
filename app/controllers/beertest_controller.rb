@@ -6,7 +6,7 @@ class BeertestController < ApplicationController
     ##       SET FALSE FOR DEV MODE        ##
     #########################################
     @prodMode = true
-    
+
     # import gems
     require 'rubygems'
     require 'twilio-ruby'
@@ -35,63 +35,54 @@ class BeertestController < ApplicationController
     minChars = 3 # min characters user must enter for search
   	
     # used to store and format search results
-    @match = []
     @matchString =""
     @messages = []
 
     # search BreweryDB for any matches
-    results = BreweryDb2.search(:q => beersearch)
-
-    # improve search results
-    if beersearch.length >= minChars && results != nil
-      # regex filter
-      results.each do |beer|
-        if beer.name.downcase.include? beersearch.downcase
-          if beer.type == "beer"
-            @match << beer
+    if beersearch.length >= minChars
+      results = BreweryDb2.search(:q => beersearch, :type => "beer")
+        #return exact match if found
+        if results != nil
+          results.each do |beer|
+            if beer.name.downcase == beersearch.downcase
+              results = [beer]
+            end
           end
         end
-      end
-      # if there is an exact match, only return that beer
-      @match.each do |beer|
-        if beer.name.downcase == beersearch.downcase
-          @match = [beer]
-	end
-      end
     # return error if user doesn't enter enough search characters
     elsif beersearch.length < minChars
-      @match = ["Please use at least #{minChars} characters for your search!"]
+      results = ["Please use at least #{minChars} characters for your search!"]
     end
 
     # if no matches found, create no matches found responce
-    if @match == []
-      @match = ["Sorry, no beers by that name found. Should we know it? Add it at brewerydb.com!"]
+    if results == nil
+      results = ["Sorry, no beers by that name found. Should we know it? Add it at brewerydb.com!"]
     end
 
     # trim search results to arrayLimit
-    @match = @match.take(arrayLimit)
+    results = results.take(arrayLimit)
 
     # return error String if present
-    if @match[0].kind_of? String
-      @matchString = @match[0]
+    if results[0].kind_of? String
+      @matchString = results[0]
     # if only one beer matched search, return info on beer
-    elsif @match.length == 1
-      @matchString = "Name: #{@match[0].name} Description: "
+    elsif results.length == 1
+      @matchString = "Name: #{results[0].name} Description: "
       # if fields aren't empty, write them otherwise write N/A
-      if @match[0].description != nil
-        @matchString = @matchString + "#{@match[0].description} ABV: "
+      if results[0].description != nil
+        @matchString = @matchString + "#{results[0].description} ABV: "
       else
         @matchString = @matchString + "N/A ABV: "
       end
-      if @match[0].abv != nil
-        @matchString = @matchString + @match[0].abv + "%"
+      if results[0].abv != nil
+        @matchString = @matchString + "#{results[0].abv}%"
       else
         @matchString = @matchString + "N/A"
       end
     # otherwise return list of beers
     else
       @matchString = "Did you mean "
-      @match.each do |beer|
+      results.each do |beer|
         @matchString += beer.name + ", "
       end
       #remove last comma and space and add ?
