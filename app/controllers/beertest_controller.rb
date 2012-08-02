@@ -24,10 +24,10 @@ class BeertestController < ApplicationController
       fromNumber = params["From"]
     else
       # dev mode search
-      beersearch = "laasdfaf"
+      beersearch = ""
     end
 
-    # remove whitespace from searches
+    # remove leading/trailing whitespace from searches
     beersearch.strip!
 
     # search variables
@@ -90,11 +90,13 @@ class BeertestController < ApplicationController
       end
     # otherwise return list of beers
     else
+      @matchString = "Did you mean "
       @match.each do |beer|
         @matchString += beer.name + ", "
       end
-      #remove last comma and space
+      #remove last comma and space and add ?
       @matchString = @matchString[0,@matchString.length-2]
+      @matchString = @matchString + "?"
     end
 
     # remove bad characters from final string
